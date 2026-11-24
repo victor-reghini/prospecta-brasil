@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prospecta Brasil | Segmentação e Exportação B2B (RFB)</title>
+  <style>
+    :root {
+      --bg: #f6f5f1;
+      --surface: #ffffff;
+      --surface-muted: #eeece6;
+      --ink: #14191f;
+      --ink-muted: #4b5563;
+      --border: #cfd5dc;
+      --accent: #0e5a3e;
+      --accent-hover: #0a442f;
+      --accent-ink: #ffffff;
+      --danger: #9f1c1c;
+      --danger-bg: #fef2f2;
+      --warning: #854d0e;
+      --warning-bg: #fefce8;
+      --success: #0e5a3e;
+      --success-bg: #ecfdf5;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+
+    .brand-tag {
+      font-size: 0.875rem;
+      color: var(--ink-muted);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 12px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: var(--radius-sm);
+    }
+
+    .nav-links a:hover {
+      background: var(--surface-muted);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+    }
+
+    .intro {
+      margin-bottom: 24px;
+    }
+
+    .intro h2 {
+      margin: 0 0 6px;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--ink-muted);
+      max-width: 72ch;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .panel-title {
+      margin: 0 0 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 580px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+
+    .checks {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      background: var(--surface-muted);
+      border-radius: var(--radius-sm);
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 36px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .actions {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--ink);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-muted);
+    }
+
+    .quote-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric-box {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .state-box {
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface-muted);
+    }
+
+    .state-box.error {
+      background: var(--danger-bg);
+      border-color: #f3c4c4;
+      color: var(--danger);
+    }
+
+    .state-box.success {
+      background: var(--success-bg);
+      border-color: #a7f3d0;
+      color: var(--success);
+    }
+
+    .state-box.warning {
+      background: var(--warning-bg);
+      border-color: #fde68a;
+      color: var(--warning);
+    }
+
+    .tiers-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .tiers-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--ink-muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .orders-section {
+      margin-top: 28px;
+    }
+
+    .orders-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface-muted);
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <h1 class="brand-name">Prospecta Brasil</h1>
+        <span class="brand-tag">Dados Abertos RFB e Exportação B2B</span>
+      </div>
+      <nav class="nav-links" aria-label="Navegação principal">
+        <a href="#segmentacao">Segmentação</a>
+        <a href="#pedidos">Pedidos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" id="segmentacao">
+      <h2>Segmentação de Empresas Ativas</h2>
+      <p>
+        Defina os critérios cadastrais, econômicos e geográficos para consultar a contagem real no PostgreSQL,
+        calcular o preço por faixas progressivas e gerar o arquivo de prospecção após o pagamento via Stripe.
+      </p>
+    </section>
+
+    <div class="workspace">
+      <section class="panel" aria-labelledby="filtros-heading">
+        <h3 class="panel-title" id="filtros-heading">Filtros da consulta</h3>
+        <form id="quote-form" class="form-grid" novalidate>
+          <div class="field">
+            <label for="regiao">Região</label>
+            <select id="regiao" name="regiao">
+              <option value="">Todas as regiões</option>
+              <option value="Norte">Norte</option>
+              <option value="Nordeste">Nordeste</option>
+              <option value="Centro-Oeste">Centro-Oeste</option>
+              <option value="Sudeste">Sudeste</option>
+              <option value="Sul">Sul</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="uf">Estado (UF)</label>
+            <select id="uf" name="uf">
+              <option value="">Todos os estados</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="municipio">Cidade (IBGE)</label>
+            <select id="municipio" name="municipio">
+              <option value="">Todas as cidades</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="porte">Porte da empresa</label>
+            <select id="porte" name="porte">
+              <option value="">Todos os portes</option>
+              <option value="2">02: Microempresa (ME)</option>
+              <option value="3">03: Empresa de Pequeno Porte (EPP)</option>
+              <option value="5">05: Demais</option>
+              <option value="1">01: Não informado</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="cnae">CNAE principal</label>
+            <select id="cnae" name="cnae">
+              <option value="">Todos os CNAEs</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="matriz">Matriz ou Filial</label>
+            <select id="matriz" name="matriz">
+              <option value="">Ambas</option>
+              <option value="1">Somente Matriz</option>
+              <option value="2">Somente Filial</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="capital-min">Capital social mínimo (R$)</label>
+            <input id="capital-min" name="capital_social_min" type="number" min="0" step="100" placeholder="Ex.: 50000" />
+          </div>
+
+          <div class="field">
+            <label for="capital-max">Capital social máximo (R$)</label>
+            <input id="capital-max" name="capital_social_max" type="number" min="0" step="100" placeholder="Ex.: 2000000" />
+          </div>
+
+          <div class="field">
+            <label for="simples">Optante pelo Simples Nacional</label>
+            <select id="simples" name="opcao_simples">
+              <option value="">Indiferente</option>
+              <option value="S">Sim (S)</option>
+              <option value="N">Não (N)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="mei">Optante pelo MEI</label>
+            <select id="mei" name="opcao_mei">
+              <option value="">Indiferente</option>
+              <option value="S">Sim (S)</option>
+              <option value="N">Não (N)</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="termo">Razão social ou nome fantasia</label>
+            <input id="termo" name="termo_busca" type="text" placeholder="Ex.: LOGISTICA" />
+          </div>
+
+          <div class="checks">
+            <label class="check-item">
+              <input id="somente-email" name="somente_com_email" type="checkbox" />
+              <span>Somente empresas com e-mail cadastrado</span>
+            </label>
+            <label class="check-item">
+              <input id="somente-telefone" name="somente_com_telefone" type="checkbox" />
+              <span>Somente empresas com telefone cadastrado</span>
+            </label>
+            <label class="check-item">
+              <input id="excluir-comprados" name="excluir_leads_ja_comprados" type="checkbox" checked />
+              <span>Excluir CNPJs já adquiridos anteriormente por esta conta</span>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit" id="btn-cotar" class="btn btn-primary">
+              Calcular cotação
+            </button>
+            <button type="button" id="btn-limpar" class="btn btn-secondary">
+              Limpar filtros
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="panel quote-summary" aria-labelledby="cotacao-heading" aria-live="polite">
+        <h3 class="panel-title" id="cotacao-heading">Resumo da cotação</h3>
+
+        <div id="quote-empty" class="state-box">
+          Preencha os filtros ao lado e clique em <strong>Calcular cotação</strong> para consultar a base ativa da Receita Federal.
+        </div>
+
+        <div id="quote-loading" class="state-box hidden">
+          Consultando registros no PostgreSQL e calculando faixas de preço...
+        </div>
+
+        <div id="quote-error" class="state-box error hidden" role="alert"></div>
+
+        <div id="quote-result" class="hidden">
+          <div class="metric-row">
+            <div class="metric-box">
+              <div class="metric-label">Empresas ativas</div>
+              <div id="res-count" class="metric-value">0</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Valor da exportação</div>
+              <div id="res-price" class="metric-value">R$ 0,00</div>
+            </div>
+          </div>
+
+          <ul id="res-tiers" class="tiers-list" aria-label="Detalhamento por faixa de preço"></ul>
+
+          <div id="res-sample-wrap" class="table-wrap hidden">
+            <table>
+              <thead>
+                <tr>
+                  <th>CNPJ (amostra)</th>
+                  <th>Razão Social</th>
+                  <th>UF / Município</th>
+                </tr>
+              </thead>
+              <tbody id="res-sample-body"></tbody>
+            </table>
+          </div>
+
+          <div class="actions">
+            <button type="button" id="btn-checkout" class="btn btn-primary">
+              Ir para checkout Stripe (CSV)
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="panel orders-section" id="pedidos" aria-labelledby="pedidos-heading">
+      <div class="orders-header">
+        <h3 class="panel-title" id="pedidos-heading" style="margin: 0;">Pedidos de exportação</h3>
+        <button type="button" id="btn-atualizar-pedidos" class="btn btn-secondary">
+          Atualizar pedidos
+        </button>
+      </div>
+
+      <div id="orders-feedback" class="state-box hidden" role="status"></div>
+      <div id="orders-empty" class="state-box">
+        Nenhum pedido encontrado para esta conta ainda.
+      </div>
+      <div id="orders-error" class="state-box error hidden" role="alert"></div>
+
+      <div id="orders-table-wrap" class="table-wrap hidden">
+        <table>
+          <thead>
+            <tr>
+              <th>Pedido</th>
+              <th>Registros</th>
+              <th>Valor</th>
+              <th>Pagamento</th>
+              <th>Arquivo</th>
+              <th>Download</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('quote-form');
+    const btnCotar = document.getElementById('btn-cotar');
+    const btnLimpar = document.getElementById('btn-limpar');
+    const btnCheckout = document.getElementById('btn-checkout');
+    const btnAtualizarPedidos = document.getElementById('btn-atualizar-pedidos');
+    const regiaoSelect = document.getElementById('regiao');
+    const ufSelect = document.getElementById('uf');
+    const municipioSelect = document.getElementById('municipio');
+    const cnaeSelect = document.getElementById('cnae');
+
+    const quoteEmpty = document.getElementById('quote-empty');
+    const quoteLoading = document.getElementById('quote-loading');
+    const quoteError = document.getElementById('quote-error');
+    const quoteResult = document.getElementById('quote-result');
+    const resCount = document.getElementById('res-count');
+    const resPrice = document.getElementById('res-price');
+    const resTiers = document.getElementById('res-tiers');
+    const resSampleWrap = document.getElementById('res-sample-wrap');
+    const resSampleBody = document.getElementById('res-sample-body');
+
+    const ordersFeedback = document.getElementById('orders-feedback');
+    const ordersEmpty = document.getElementById('orders-empty');
+    const ordersError = document.getElementById('orders-error');
+    const ordersTableWrap = document.getElementById('orders-table-wrap');
+    const ordersBody = document.getElementById('orders-body');
+
+    let lastFilters = null;
+    let cnaesCatalog = [];
+    let estadosCatalog = [];
+    let municipiosCatalog = [];
+
+    const FALLBACK_CNAES = [
+      { codigo: 6201501, codigoFormatado: '6201-5/01', descricao: 'Desenvolvimento de programas de computador sob encomenda', secao: 'Tecnologia e Software' },
+      { codigo: 4930202, codigoFormatado: '4930-2/02', descricao: 'Transporte rodoviário de carga, exceto produtos perigosos e mudanças, intermunicipal, interestadual e internacional', secao: 'Transporte e Logística' },
+      { codigo: 4120400, codigoFormatado: '4120-4/00', descricao: 'Construção de edifícios', secao: 'Construção e Engenharia' },
+      { codigo: 4711302, codigoFormatado: '4711-3/02', descricao: 'Comércio varejista de mercadorias em geral, com predominância de produtos alimentícios - supermercados', secao: 'Comércio Varejista' },
+      { codigo: 7020400, codigoFormatado: '7020-4/00', descricao: 'Atividades de consultoria em gestão empresarial, exceto consultoria técnica específica', secao: 'Consultoria e Serviços Corporativos' }
+    ];
+
+    const FALLBACK_ESTADOS = [
+      { sigla: 'BA', nome: 'Bahia', regiao: 'Nordeste' },
+      { sigla: 'MG', nome: 'Minas Gerais', regiao: 'Sudeste' },
+      { sigla: 'PR', nome: 'Paraná', regiao: 'Sul' },
+      { sigla: 'RJ', nome: 'Rio de Janeiro', regiao: 'Sudeste' },
+      { sigla: 'SP', nome: 'São Paulo', regiao: 'Sudeste' }
+    ];
+
+    const FALLBACK_MUNICIPIOS = [
+      { codigo_ibge: 3106200, nome: 'Belo Horizonte', uf: 'MG' },
+      { codigo_ibge: 4106902, nome: 'Curitiba', uf: 'PR' },
+      { codigo_ibge: 3304557, nome: 'Rio de Janeiro', uf: 'RJ' },
+      { codigo_ibge: 2927408, nome: 'Salvador', uf: 'BA' },
+      { codigo_ibge: 3550308, nome: 'São Paulo', uf: 'SP' }
+    ];
+
+    function renderCnaeDropdown() {
+      const valorAtual = cnaeSelect.value;
+      cnaeSelect.innerHTML = '';
+
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = `Todos os CNAEs (${cnaesCatalog.length} opções)`;
+      cnaeSelect.appendChild(defaultOption);
+
+      const grupos = new Map();
+      for (const item of cnaesCatalog) {
+        if (!grupos.has(item.secao)) {
+          grupos.set(item.secao, []);
+        }
+        grupos.get(item.secao).push(item);
+      }
+
+      for (const [secao, itens] of grupos.entries()) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = secao;
+        for (const item of itens) {
+          const option = document.createElement('option');
+          option.value = String(item.codigo);
+          option.textContent = `${item.codigoFormatado} - ${item.descricao}`;
+          optgroup.appendChild(option);
+        }
+        cnaeSelect.appendChild(optgroup);
+      }
+
+      if (valorAtual) {
+        cnaeSelect.value = valorAtual;
+      }
+    }
+
+    function renderEstadosDropdown() {
+      const regiaoSelecionada = regiaoSelect.value;
+      const ufAtual = ufSelect.value;
+      const estadosFiltrados = regiaoSelecionada
+        ? estadosCatalog.filter((e) => e.regiao === regiaoSelecionada)
+        : estadosCatalog;
+
+      ufSelect.innerHTML = '';
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = '';
+      defaultOpt.textContent = regiaoSelecionada
+        ? `Todos os estados (${regiaoSelecionada})`
+        : `Todos os estados (${estadosFiltrados.length})`;
+      ufSelect.appendChild(defaultOpt);
+
+      for (const estado of estadosFiltrados) {
+        const option = document.createElement('option');
+        option.value = estado.sigla;
+        option.textContent = `${estado.sigla} - ${estado.nome}`;
+        ufSelect.appendChild(option);
+      }
+
+      if (ufAtual && estadosFiltrados.some((e) => e.sigla === ufAtual)) {
+        ufSelect.value = ufAtual;
+      } else {
+        ufSelect.value = '';
+      }
+    }
+
+    function renderMunicipiosDropdown() {
+      const ufSelecionada = ufSelect.value;
+      const regiaoSelecionada = regiaoSelect.value;
+      const cidadeAtual = municipioSelect.value;
+
+      const ufsDaRegiao = new Set(
+        (regiaoSelecionada
+          ? estadosCatalog.filter((e) => e.regiao === regiaoSelecionada)
+          : estadosCatalog
+        ).map((e) => e.sigla),
+      );
+
+      const municipiosFiltrados = municipiosCatalog
+        .filter((m) => {
+          if (ufSelecionada) return m.uf === ufSelecionada;
+          return ufsDaRegiao.has(m.uf);
+        })
+        .slice()
+        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+      municipioSelect.innerHTML = '';
+      const defaultOpt = document.createElement('option');
+      defaultOpt.value = '';
+      defaultOpt.textContent = ufSelecionada
+        ? `Todas as cidades de ${ufSelecionada} (${municipiosFiltrados.length})`
+        : `Todas as cidades (${municipiosFiltrados.length})`;
+      municipioSelect.appendChild(defaultOpt);
+
+      for (const mun of municipiosFiltrados) {
+        const option = document.createElement('option');
+        option.value = String(mun.codigo_ibge);
+        option.textContent = ufSelecionada ? mun.nome : `${mun.nome} (${mun.uf})`;
+        municipioSelect.appendChild(option);
+      }
+
+      if (cidadeAtual && municipiosFiltrados.some((m) => String(m.codigo_ibge) === cidadeAtual)) {
+        municipioSelect.value = cidadeAtual;
+      } else {
+        municipioSelect.value = '';
+      }
+    }
+
+    async function carregarCatalogoCnaes() {
+      try {
+        const response = await fetch('/api/cnaes');
+        if (!response.ok) throw new Error('Falha ao buscar catálogo de CNAEs');
+        const data = await response.json();
+        cnaesCatalog = Array.isArray(data.cnaes) && data.cnaes.length > 0 ? data.cnaes : FALLBACK_CNAES;
+      } catch {
+        cnaesCatalog = FALLBACK_CNAES;
+      }
+      renderCnaeDropdown();
+    }
+
+    async function carregarLocalidades() {
+      try {
+        const response = await fetch('/api/localidades');
+        if (!response.ok) throw new Error('Falha ao buscar localidades');
+        const data = await response.json();
+        estadosCatalog = Array.isArray(data.estados) && data.estados.length > 0 ? data.estados : FALLBACK_ESTADOS;
+        municipiosCatalog = Array.isArray(data.municipios) && data.municipios.length > 0 ? data.municipios : FALLBACK_MUNICIPIOS;
+      } catch {
+        estadosCatalog = FALLBACK_ESTADOS;
+        municipiosCatalog = FALLBACK_MUNICIPIOS;
+      }
+      renderEstadosDropdown();
+      renderMunicipiosDropdown();
+    }
+
+    function buildFiltersFromForm() {
+      const filtros = {};
+      const uf = ufSelect.value;
+      if (uf) filtros.uf = [uf];
+
+      const regiao = regiaoSelect.value;
+      if (regiao) filtros.regiao = [regiao];
+
+      const cnae = Number(cnaeSelect.value);
+      if (Number.isInteger(cnae) && cnae > 0) {
+        filtros.cnae_fiscal_principal = [cnae];
+      }
+
+      const municipio = Number(municipioSelect.value);
+      if (Number.isInteger(municipio) && municipio > 0) {
+        filtros.codigo_municipio_ibge = [municipio];
+      }
+
+      const porte = Number(document.getElementById('porte').value);
+      if (Number.isInteger(porte) && porte > 0) filtros.porte_empresa = [porte];
+
+      const matriz = Number(document.getElementById('matriz').value);
+      if (matriz === 1 || matriz === 2) filtros.matriz_filial = matriz;
+
+      const capMin = document.getElementById('capital-min').value;
+      if (capMin !== '') filtros.capital_social_min = Number(capMin);
+
+      const capMax = document.getElementById('capital-max').value;
+      if (capMax !== '') filtros.capital_social_max = Number(capMax);
+
+      const simples = document.getElementById('simples').value;
+      if (simples) filtros.opcao_simples = simples;
+
+      const mei = document.getElementById('mei').value;
+      if (mei) filtros.opcao_mei = mei;
+
+      const termo = document.getElementById('termo').value.trim();
+      if (termo) filtros.termo_busca = termo;
+
+      if (document.getElementById('somente-email').checked) {
+        filtros.somente_com_email = true;
+      }
+      if (document.getElementById('somente-telefone').checked) {
+        filtros.somente_com_telefone = true;
+      }
+      if (document.getElementById('excluir-comprados').checked) {
+        filtros.excluir_leads_ja_comprados = true;
+      }
+      return filtros;
+    }
+
+    function showQuoteState(state) {
+      quoteEmpty.classList.toggle('hidden', state !== 'empty');
+      quoteLoading.classList.toggle('hidden', state !== 'loading');
+      quoteError.classList.toggle('hidden', state !== 'error');
+      quoteResult.classList.toggle('hidden', state !== 'result');
+    }
+
+    async function calcularCotacao(event) {
+      event.preventDefault();
+      const filtros = buildFiltersFromForm();
+      lastFilters = filtros;
+      btnCotar.disabled = true;
+      showQuoteState('loading');
+
+      try {
+        const response = await fetch('/api/quotes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filtros }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Falha ao consultar cotação.');
+        }
+
+        resCount.textContent = Number(data.quantidadeRegistros).toLocaleString('pt-BR');
+        resPrice.textContent = data.valorFormatado;
+
+        resTiers.innerHTML = '';
+        for (const faixa of data.faixas || []) {
+          const li = document.createElement('li');
+          const label = document.createElement('span');
+          label.textContent = `${faixa.faixa} (${faixa.quantidade.toLocaleString('pt-BR')} reg.)`;
+          const val = document.createElement('strong');
+          val.textContent = (faixa.subtotalCentavos / 100).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          });
+          li.append(label, val);
+          resTiers.appendChild(li);
+        }
+
+        resSampleBody.innerHTML = '';
+        if (Array.isArray(data.amostra) && data.amostra.length > 0) {
+          for (const emp of data.amostra) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '';
+            const tdCnpj = document.createElement('td');
+            tdCnpj.textContent = emp.cnpj_mascarado;
+            const tdRazao = document.createElement('td');
+            tdRazao.textContent = emp.razao_social;
+            const tdLoc = document.createElement('td');
+            tdLoc.textContent = `${emp.municipio_nome} - ${emp.uf}`;
+            tr.append(tdCnpj, tdRazao, tdLoc);
+            resSampleBody.appendChild(tr);
+          }
+          resSampleWrap.classList.remove('hidden');
+        } else {
+          resSampleWrap.classList.add('hidden');
+        }
+
+        btnCheckout.disabled = data.quantidadeRegistros === 0;
+        showQuoteState('result');
+      } catch (err) {
+        quoteError.textContent = err instanceof Error ? err.message : 'Erro inesperado ao consultar.';
+        showQuoteState('error');
+      } finally {
+        btnCotar.disabled = false;
+      }
+    }
+
+    async function aguardarArquivoPedido(pedidoId) {
+      for (let tentativa = 0; tentativa < 15; tentativa += 1) {
+        const res = await fetch(`/api/pedidos/${encodeURIComponent(pedidoId)}`);
+        if (res.ok) {
+          const detail = await res.json();
+          if (detail.pedido?.status_arquivo === 'READY' || detail.pedido?.status_arquivo === 'FAILED') {
+            await carregarPedidos();
+            if (detail.pedido.status_arquivo === 'READY') {
+              ordersFeedback.className = 'state-box success';
+              ordersFeedback.textContent = `Exportação gratuita em localhost concluída para o pedido ${pedidoId.slice(0, 8)} (valor exibido de referência: ${detail.pedido.valor_formatado}). Clique em Baixar CSV na lista abaixo.`;
+            } else {
+              ordersFeedback.className = 'state-box error';
+              ordersFeedback.textContent = `Falha ao gerar o arquivo do pedido ${pedidoId.slice(0, 8)}.`;
+            }
+            return;
+          }
+        }
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+      await carregarPedidos();
+    }
+
+    async function iniciarCheckout() {
+      if (!lastFilters) return;
+      btnCheckout.disabled = true;
+      quoteError.classList.add('hidden');
+
+      try {
+        const response = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filtros: lastFilters, formatoArquivo: 'csv' }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Não foi possível criar a sessão de checkout.');
+        }
+
+        if (data.modoLocalhost) {
+          ordersFeedback.className = 'state-box success';
+          ordersFeedback.textContent = `Exportação gratuita liberada em localhost para o pedido ${data.pedidoId.slice(0, 8)}. Gerando arquivo CSV...`;
+          ordersFeedback.classList.remove('hidden');
+          await carregarPedidos();
+          await aguardarArquivoPedido(data.pedidoId);
+          document.getElementById('pedidos')?.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        }
+      } catch (err) {
+        quoteError.textContent = err instanceof Error ? err.message : 'Erro ao iniciar checkout.';
+        quoteError.classList.remove('hidden');
+      } finally {
+        btnCheckout.disabled = false;
+      }
+    }
+
+    async function carregarPedidos() {
+      ordersError.classList.add('hidden');
+      try {
+        const response = await fetch('/api/pedidos');
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Falha ao carregar pedidos.');
+        }
+
+        const pedidos = data.pedidos || [];
+        if (pedidos.length === 0) {
+          ordersEmpty.classList.remove('hidden');
+          ordersTableWrap.classList.add('hidden');
+          return;
+        }
+
+        ordersEmpty.classList.add('hidden');
+        ordersTableWrap.classList.remove('hidden');
+        ordersBody.innerHTML = '';
+
+        for (const p of pedidos) {
+          const tr = document.createElement('tr');
+          const tdId = document.createElement('td');
+          tdId.textContent = p.id.slice(0, 8);
+
+          const tdQtd = document.createElement('td');
+          tdQtd.textContent = Number(p.quantidade_registros).toLocaleString('pt-BR');
+
+          const tdVal = document.createElement('td');
+          tdVal.textContent = p.valor_formatado;
+
+          const tdPag = document.createElement('td');
+          const badgePag = document.createElement('span');
+          badgePag.className = 'status-badge';
+          badgePag.textContent = p.status_pagamento;
+          tdPag.appendChild(badgePag);
+
+          const tdArq = document.createElement('td');
+          const badgeArq = document.createElement('span');
+          badgeArq.className = 'status-badge';
+          badgeArq.textContent = p.status_arquivo;
+          tdArq.appendChild(badgeArq);
+
+          const tdLink = document.createElement('td');
+          if (p.status_arquivo === 'READY') {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-secondary';
+            btn.textContent = 'Baixar CSV';
+            btn.addEventListener('click', async () => {
+              const res = await fetch(`/api/pedidos/${encodeURIComponent(p.id)}`);
+              const detail = await res.json();
+              if (detail.downloadUrl) {
+                window.open(detail.downloadUrl, '_blank', 'noopener');
+              }
+            });
+            tdLink.appendChild(btn);
+          } else {
+            tdLink.textContent = 'Aguardando';
+          }
+
+          tr.append(tdId, tdQtd, tdVal, tdPag, tdArq, tdLink);
+          ordersBody.appendChild(tr);
+        }
+      } catch (err) {
+        ordersError.textContent = err instanceof Error ? err.message : 'Erro ao listar pedidos.';
+        ordersError.classList.remove('hidden');
+      }
+    }
+
+    function verificarRetornoCheckout() {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get('status');
+      const pedidoId = params.get('pedido');
+      if (status === 'sucesso' && pedidoId) {
+        ordersFeedback.className = 'state-box success';
+        ordersFeedback.textContent = `Pagamento recebido para o pedido ${pedidoId.slice(0, 8)}. O arquivo será disponibilizado assim que o processamento concluir.`;
+        ordersFeedback.classList.remove('hidden');
+      } else if (status === 'cancelado') {
+        ordersFeedback.className = 'state-box warning';
+        ordersFeedback.textContent = 'Checkout cancelado. Seus filtros continuam disponíveis para nova cotação.';
+        ordersFeedback.classList.remove('hidden');
+      }
+    }
+
+    const isLocalhostUi = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+    if (isLocalhostUi) {
+      btnCheckout.textContent = 'Exportar CSV grátis (modo localhost)';
+    }
+
+    form.addEventListener('submit', calcularCotacao);
+    regiaoSelect.addEventListener('change', () => {
+      renderEstadosDropdown();
+      renderMunicipiosDropdown();
+    });
+    ufSelect.addEventListener('change', renderMunicipiosDropdown);
+    btnLimpar.addEventListener('click', () => {
+      form.reset();
+      renderEstadosDropdown();
+      renderMunicipiosDropdown();
+      lastFilters = null;
+      showQuoteState('empty');
+    });
+    btnCheckout.addEventListener('click', iniciarCheckout);
+    btnAtualizarPedidos.addEventListener('click', carregarPedidos);
+
+    verificarRetornoCheckout();
+    carregarCatalogoCnaes();
+    carregarLocalidades();
+    carregarPedidos();
+  </script>
+</body>
+</html>
