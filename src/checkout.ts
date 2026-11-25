@@ -115,7 +115,7 @@ export function createCheckoutHandler(deps: CheckoutDeps) {
 
       const filtros = normalizarFiltros(req.body?.filtros);
       const formatoBruto = req.body?.formatoArquivo;
-      const formatoArquivo: FormatoArquivo = formatoBruto === 'xlsx' ? 'xlsx' : 'csv';
+      const formatoArquivo: FormatoArquivo = formatoBruto === 'csv' ? 'csv' : 'xlsx';
 
       const totalRegistros = await deps.db.contarEmpresasComFiltros(filtros, usuario.id);
       if (totalRegistros === 0) {

@@ -57,7 +57,7 @@ export function createStripeWebhookHandler(deps: WebhookDeps) {
       if (session.payment_status === 'paid') {
         const pedidoId = session.metadata?.pedido_id;
         const formatoArquivo: FormatoArquivo =
-          session.metadata?.formato_arquivo === 'xlsx' ? 'xlsx' : 'csv';
+          session.metadata?.formato_arquivo === 'csv' ? 'csv' : 'xlsx';
 
         if (!pedidoId) {
           return res.status(400).json({ error: 'Metadata pedido_id ausente na sessão Stripe.' });

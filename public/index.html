@@ -164,13 +164,15 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      position: relative;
     }
 
     .field.full {
       grid-column: 1 / -1;
     }
 
-    label {
+    label,
+    .field-label {
       font-size: 0.875rem;
       font-weight: 600;
       color: var(--ink);
@@ -193,6 +195,126 @@
       background: var(--surface);
       color: var(--ink);
       font-size: 0.95rem;
+    }
+
+    .multi-dd {
+      position: relative;
+    }
+
+    .multi-dd-trigger {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .multi-dd-trigger-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .multi-dd-caret {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      flex-shrink: 0;
+    }
+
+    .multi-dd-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 10px 24px rgba(20, 25, 31, 0.14);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .multi-dd-toolbar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .multi-dd-search {
+      flex: 1;
+      min-height: 38px !important;
+      padding: 6px 10px !important;
+      font-size: 0.875rem !important;
+    }
+
+    .multi-dd-clear {
+      min-height: 38px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-muted);
+      color: var(--ink);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .multi-dd-options {
+      max-height: 240px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .multi-dd-group {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+      padding: 8px 8px 4px;
+      border-top: 1px solid var(--surface-muted);
+    }
+
+    .multi-dd-group:first-child {
+      border-top: none;
+      padding-top: 2px;
+    }
+
+    .multi-dd-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 0.88rem;
+      min-height: 40px;
+    }
+
+    .multi-dd-option:hover {
+      background: var(--surface-muted);
+    }
+
+    .multi-dd-option input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
     }
 
     .checks {
@@ -389,7 +511,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
   </style>
 </head>
@@ -412,7 +534,7 @@
       <h2>Segmentação de Empresas Ativas</h2>
       <p>
         Defina os critérios cadastrais, econômicos e geográficos para consultar a contagem real no PostgreSQL,
-        calcular o preço por faixas progressivas e gerar o arquivo de prospecção após o pagamento via Stripe.
+        calcular o preço por faixas progressivas e gerar a planilha XLSX de prospecção após o pagamento via Stripe.
       </p>
     </section>
 
@@ -421,29 +543,18 @@
         <h3 class="panel-title" id="filtros-heading">Filtros da consulta</h3>
         <form id="quote-form" class="form-grid" novalidate>
           <div class="field">
-            <label for="regiao">Região</label>
-            <select id="regiao" name="regiao">
-              <option value="">Todas as regiões</option>
-              <option value="Norte">Norte</option>
-              <option value="Nordeste">Nordeste</option>
-              <option value="Centro-Oeste">Centro-Oeste</option>
-              <option value="Sudeste">Sudeste</option>
-              <option value="Sul">Sul</option>
-            </select>
+            <span class="field-label" id="lbl-regiao">Regiões</span>
+            <div id="dd-regiao" class="multi-dd"></div>
           </div>
 
           <div class="field">
-            <label for="uf">Estado (UF)</label>
-            <select id="uf" name="uf">
-              <option value="">Todos os estados</option>
-            </select>
+            <span class="field-label" id="lbl-uf">Estados (UF)</span>
+            <div id="dd-uf" class="multi-dd"></div>
           </div>
 
           <div class="field">
-            <label for="municipio">Cidade (IBGE)</label>
-            <select id="municipio" name="municipio">
-              <option value="">Todas as cidades</option>
-            </select>
+            <span class="field-label" id="lbl-municipio">Cidades (IBGE)</span>
+            <div id="dd-municipio" class="multi-dd"></div>
           </div>
 
           <div class="field">
@@ -458,10 +569,8 @@
           </div>
 
           <div class="field full">
-            <label for="cnae">CNAE principal</label>
-            <select id="cnae" name="cnae">
-              <option value="">Todos os CNAEs</option>
-            </select>
+            <span class="field-label" id="lbl-cnae">CNAEs principais</span>
+            <div id="dd-cnae" class="multi-dd"></div>
           </div>
 
           <div class="field">
@@ -474,22 +583,22 @@
           </div>
 
           <div class="field">
-            <label for="capital-min">Capital social mínimo (R$)</label>
-            <input id="capital-min" name="capital_social_min" type="number" min="0" step="100" placeholder="Ex.: 50000" />
-          </div>
-
-          <div class="field">
-            <label for="capital-max">Capital social máximo (R$)</label>
-            <input id="capital-max" name="capital_social_max" type="number" min="0" step="100" placeholder="Ex.: 2000000" />
-          </div>
-
-          <div class="field">
             <label for="simples">Optante pelo Simples Nacional</label>
             <select id="simples" name="opcao_simples">
               <option value="">Indiferente</option>
               <option value="S">Sim (S)</option>
               <option value="N">Não (N)</option>
             </select>
+          </div>
+
+          <div class="field">
+            <label for="capital-min">Capital social mínimo (R$)</label>
+            <input id="capital-min" name="capital_social_min" type="text" inputmode="numeric" placeholder="R$ 0,00" />
+          </div>
+
+          <div class="field">
+            <label for="capital-max">Capital social máximo (R$)</label>
+            <input id="capital-max" name="capital_social_max" type="text" inputmode="numeric" placeholder="R$ 0,00" />
           </div>
 
           <div class="field">
@@ -501,7 +610,7 @@
             </select>
           </div>
 
-          <div class="field full">
+          <div class="field">
             <label for="termo">Razão social ou nome fantasia</label>
             <input id="termo" name="termo_busca" type="text" placeholder="Ex.: LOGISTICA" />
           </div>
@@ -566,6 +675,7 @@
                   <th>CNPJ (amostra)</th>
                   <th>Razão Social</th>
                   <th>UF / Município</th>
+                  <th>Capital Social</th>
                 </tr>
               </thead>
               <tbody id="res-sample-body"></tbody>
@@ -574,7 +684,7 @@
 
           <div class="actions">
             <button type="button" id="btn-checkout" class="btn btn-primary">
-              Ir para checkout Stripe (CSV)
+              Ir para checkout Stripe (XLSX)
             </button>
           </div>
         </div>
@@ -619,10 +729,8 @@
     const btnLimpar = document.getElementById('btn-limpar');
     const btnCheckout = document.getElementById('btn-checkout');
     const btnAtualizarPedidos = document.getElementById('btn-atualizar-pedidos');
-    const regiaoSelect = document.getElementById('regiao');
-    const ufSelect = document.getElementById('uf');
-    const municipioSelect = document.getElementById('municipio');
-    const cnaeSelect = document.getElementById('cnae');
+    const capitalMinInput = document.getElementById('capital-min');
+    const capitalMaxInput = document.getElementById('capital-max');
 
     const quoteEmpty = document.getElementById('quote-empty');
     const quoteLoading = document.getElementById('quote-loading');
@@ -644,6 +752,13 @@
     let cnaesCatalog = [];
     let estadosCatalog = [];
     let municipiosCatalog = [];
+
+    const selectedRegioes = new Set();
+    const selectedUfs = new Set();
+    const selectedMunicipios = new Set();
+    const selectedCnaes = new Set();
+
+    const REGIOES = ['Norte', 'Nordeste', 'Centro-Oeste', 'Sudeste', 'Sul'];
 
     const FALLBACK_CNAES = [
       { codigo: 6201501, codigoFormatado: '6201-5/01', descricao: 'Desenvolvimento de programas de computador sob encomenda', secao: 'Tecnologia e Software' },
@@ -669,109 +784,315 @@
       { codigo_ibge: 3550308, nome: 'São Paulo', uf: 'SP' }
     ];
 
-    function renderCnaeDropdown() {
-      const valorAtual = cnaeSelect.value;
-      cnaeSelect.innerHTML = '';
+    function formatarMoedaBrl(valorNumero) {
+      return Number(valorNumero || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      });
+    }
 
-      const defaultOption = document.createElement('option');
-      defaultOption.value = '';
-      defaultOption.textContent = `Todos os CNAEs (${cnaesCatalog.length} opções)`;
-      cnaeSelect.appendChild(defaultOption);
+    function formatarInputMoeda(rawValue) {
+      const digits = String(rawValue || '').replace(/\D/g, '');
+      if (!digits) return '';
+      const centavos = Number(digits);
+      return formatarMoedaBrl(centavos / 100);
+    }
 
-      const grupos = new Map();
-      for (const item of cnaesCatalog) {
-        if (!grupos.has(item.secao)) {
-          grupos.set(item.secao, []);
-        }
-        grupos.get(item.secao).push(item);
-      }
+    function desmascararMoedaParaNumero(texto) {
+      const digits = String(texto || '').replace(/\D/g, '');
+      if (!digits) return undefined;
+      return Number(digits) / 100;
+    }
 
-      for (const [secao, itens] of grupos.entries()) {
-        const optgroup = document.createElement('optgroup');
-        optgroup.label = secao;
-        for (const item of itens) {
-          const option = document.createElement('option');
-          option.value = String(item.codigo);
-          option.textContent = `${item.codigoFormatado} - ${item.descricao}`;
-          optgroup.appendChild(option);
-        }
-        cnaeSelect.appendChild(optgroup);
-      }
+    const activeDropdowns = [];
 
-      if (valorAtual) {
-        cnaeSelect.value = valorAtual;
+    function fecharOutrosDropdowns(exceto) {
+      for (const dd of activeDropdowns) {
+        if (dd !== exceto) dd.close();
       }
     }
 
-    function renderEstadosDropdown() {
-      const regiaoSelecionada = regiaoSelect.value;
-      const ufAtual = ufSelect.value;
-      const estadosFiltrados = regiaoSelecionada
-        ? estadosCatalog.filter((e) => e.regiao === regiaoSelecionada)
-        : estadosCatalog;
-
-      ufSelect.innerHTML = '';
-      const defaultOpt = document.createElement('option');
-      defaultOpt.value = '';
-      defaultOpt.textContent = regiaoSelecionada
-        ? `Todos os estados (${regiaoSelecionada})`
-        : `Todos os estados (${estadosFiltrados.length})`;
-      ufSelect.appendChild(defaultOpt);
-
-      for (const estado of estadosFiltrados) {
-        const option = document.createElement('option');
-        option.value = estado.sigla;
-        option.textContent = `${estado.sigla} - ${estado.nome}`;
-        ufSelect.appendChild(option);
+    function createMultiSelectDropdown(config) {
+      const container = document.getElementById(config.containerId);
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'multi-dd-trigger';
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.setAttribute('aria-haspopup', 'listbox');
+      if (config.labelId) {
+        trigger.setAttribute('aria-labelledby', config.labelId);
       }
 
-      if (ufAtual && estadosFiltrados.some((e) => e.sigla === ufAtual)) {
-        ufSelect.value = ufAtual;
-      } else {
-        ufSelect.value = '';
+      const triggerText = document.createElement('span');
+      triggerText.className = 'multi-dd-trigger-text';
+      const caret = document.createElement('span');
+      caret.className = 'multi-dd-caret';
+      caret.textContent = '▾';
+      trigger.append(triggerText, caret);
+
+      const menu = document.createElement('div');
+      menu.className = 'multi-dd-menu hidden';
+      menu.setAttribute('role', 'region');
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'multi-dd-toolbar';
+
+      const searchInput = document.createElement('input');
+      searchInput.type = 'text';
+      searchInput.className = 'multi-dd-search';
+      searchInput.placeholder = config.searchPlaceholder || 'Filtrar opções...';
+
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'multi-dd-clear';
+      clearBtn.textContent = 'Limpar';
+
+      toolbar.append(searchInput, clearBtn);
+
+      const optionsBox = document.createElement('div');
+      optionsBox.className = 'multi-dd-options';
+      optionsBox.setAttribute('role', 'listbox');
+      optionsBox.setAttribute('aria-multiselectable', 'true');
+
+      menu.append(toolbar, optionsBox);
+      container.append(trigger, menu);
+
+      let currentOptions = [];
+
+      function updateSummary() {
+        const selecionados = currentOptions.filter((opt) => config.selectedSet.has(opt.value));
+        if (selecionados.length === 0) {
+          triggerText.textContent = config.emptyLabel(currentOptions.length);
+        } else if (selecionados.length <= 2) {
+          triggerText.textContent = selecionados.map((o) => o.shortLabel || o.label).join(', ');
+        } else {
+          triggerText.textContent = `${selecionados.length} selecionados`;
+        }
       }
+
+      function renderOptions() {
+        const q = searchInput.value.trim().toLowerCase();
+        const filtered = currentOptions.filter((opt) => {
+          if (!q) return true;
+          return (
+            opt.label.toLowerCase().includes(q) ||
+            (opt.group && opt.group.toLowerCase().includes(q)) ||
+            String(opt.value).toLowerCase().includes(q)
+          );
+        });
+
+        optionsBox.innerHTML = '';
+        if (filtered.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'hint';
+          empty.style.padding = '8px';
+          empty.textContent = 'Nenhuma opção encontrada.';
+          optionsBox.appendChild(empty);
+          return;
+        }
+
+        let lastGroup = null;
+        for (const opt of filtered) {
+          if (opt.group && opt.group !== lastGroup) {
+            const groupEl = document.createElement('div');
+            groupEl.className = 'multi-dd-group';
+            groupEl.textContent = opt.group;
+            optionsBox.appendChild(groupEl);
+            lastGroup = opt.group;
+          }
+
+          const row = document.createElement('label');
+          row.className = 'multi-dd-option';
+
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = config.selectedSet.has(opt.value);
+          cb.addEventListener('change', () => {
+            if (cb.checked) {
+              config.selectedSet.add(opt.value);
+            } else {
+              config.selectedSet.delete(opt.value);
+            }
+            updateSummary();
+            if (config.onChange) config.onChange();
+          });
+
+          const txt = document.createElement('span');
+          txt.textContent = opt.label;
+          row.append(cb, txt);
+          optionsBox.appendChild(row);
+        }
+      }
+
+      function open() {
+        fecharOutrosDropdowns(api);
+        menu.classList.remove('hidden');
+        trigger.setAttribute('aria-expanded', 'true');
+        searchInput.focus();
+      }
+
+      function close() {
+        menu.classList.add('hidden');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      trigger.addEventListener('click', () => {
+        if (menu.classList.contains('hidden')) {
+          open();
+        } else {
+          close();
+        }
+      });
+
+      searchInput.addEventListener('input', renderOptions);
+
+      clearBtn.addEventListener('click', () => {
+        config.selectedSet.clear();
+        renderOptions();
+        updateSummary();
+        if (config.onChange) config.onChange();
+      });
+
+      const api = {
+        container,
+        close,
+        setOptions(opts) {
+          currentOptions = opts;
+          const validValues = new Set(opts.map((o) => o.value));
+          for (const val of Array.from(config.selectedSet)) {
+            if (!validValues.has(val)) {
+              config.selectedSet.delete(val);
+            }
+          }
+          renderOptions();
+          updateSummary();
+        },
+        reset() {
+          config.selectedSet.clear();
+          searchInput.value = '';
+          renderOptions();
+          updateSummary();
+        },
+      };
+
+      activeDropdowns.push(api);
+      return api;
     }
 
-    function renderMunicipiosDropdown() {
-      const ufSelecionada = ufSelect.value;
-      const regiaoSelecionada = regiaoSelect.value;
-      const cidadeAtual = municipioSelect.value;
+    document.addEventListener('click', (event) => {
+      for (const dd of activeDropdowns) {
+        if (!dd.container.contains(event.target)) {
+          dd.close();
+        }
+      }
+    });
 
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        fecharOutrosDropdowns(null);
+      }
+    });
+
+    const ddRegiao = createMultiSelectDropdown({
+      containerId: 'dd-regiao',
+      labelId: 'lbl-regiao',
+      selectedSet: selectedRegioes,
+      searchPlaceholder: 'Filtrar regiões...',
+      emptyLabel: () => 'Todas as regiões',
+      onChange: () => {
+        atualizarDropdownEstados();
+        atualizarDropdownMunicipios();
+      },
+    });
+
+    const ddUf = createMultiSelectDropdown({
+      containerId: 'dd-uf',
+      labelId: 'lbl-uf',
+      selectedSet: selectedUfs,
+      searchPlaceholder: 'Filtrar estados...',
+      emptyLabel: (count) =>
+        selectedRegioes.size > 0
+          ? `Todos os estados selecionados (${count})`
+          : `Todos os estados (${count})`,
+      onChange: () => {
+        atualizarDropdownMunicipios();
+      },
+    });
+
+    const ddMunicipio = createMultiSelectDropdown({
+      containerId: 'dd-municipio',
+      labelId: 'lbl-municipio',
+      selectedSet: selectedMunicipios,
+      searchPlaceholder: 'Filtrar cidades...',
+      emptyLabel: (count) =>
+        selectedUfs.size > 0
+          ? `Todas as cidades das UFs (${count})`
+          : `Todas as cidades (${count})`,
+    });
+
+    const ddCnae = createMultiSelectDropdown({
+      containerId: 'dd-cnae',
+      labelId: 'lbl-cnae',
+      selectedSet: selectedCnaes,
+      searchPlaceholder: 'Buscar por código, atividade ou setor...',
+      emptyLabel: (count) => `Todos os CNAEs (${count} opções)`,
+    });
+
+    function atualizarDropdownRegioes() {
+      ddRegiao.setOptions(
+        REGIOES.map((reg) => ({ value: reg, label: reg, shortLabel: reg })),
+      );
+    }
+
+    function atualizarDropdownEstados() {
+      const estadosFiltrados =
+        selectedRegioes.size > 0
+          ? estadosCatalog.filter((e) => selectedRegioes.has(e.regiao))
+          : estadosCatalog;
+
+      ddUf.setOptions(
+        estadosFiltrados.map((e) => ({
+          value: e.sigla,
+          label: `${e.sigla} - ${e.nome}`,
+          shortLabel: e.sigla,
+        })),
+      );
+    }
+
+    function atualizarDropdownMunicipios() {
       const ufsDaRegiao = new Set(
-        (regiaoSelecionada
-          ? estadosCatalog.filter((e) => e.regiao === regiaoSelecionada)
+        (selectedRegioes.size > 0
+          ? estadosCatalog.filter((e) => selectedRegioes.has(e.regiao))
           : estadosCatalog
         ).map((e) => e.sigla),
       );
 
       const municipiosFiltrados = municipiosCatalog
         .filter((m) => {
-          if (ufSelecionada) return m.uf === ufSelecionada;
+          if (selectedUfs.size > 0) return selectedUfs.has(m.uf);
           return ufsDaRegiao.has(m.uf);
         })
         .slice()
         .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
 
-      municipioSelect.innerHTML = '';
-      const defaultOpt = document.createElement('option');
-      defaultOpt.value = '';
-      defaultOpt.textContent = ufSelecionada
-        ? `Todas as cidades de ${ufSelecionada} (${municipiosFiltrados.length})`
-        : `Todas as cidades (${municipiosFiltrados.length})`;
-      municipioSelect.appendChild(defaultOpt);
+      ddMunicipio.setOptions(
+        municipiosFiltrados.map((m) => ({
+          value: m.codigo_ibge,
+          label: `${m.nome} (${m.uf})`,
+          shortLabel: `${m.nome}/${m.uf}`,
+        })),
+      );
+    }
 
-      for (const mun of municipiosFiltrados) {
-        const option = document.createElement('option');
-        option.value = String(mun.codigo_ibge);
-        option.textContent = ufSelecionada ? mun.nome : `${mun.nome} (${mun.uf})`;
-        municipioSelect.appendChild(option);
-      }
-
-      if (cidadeAtual && municipiosFiltrados.some((m) => String(m.codigo_ibge) === cidadeAtual)) {
-        municipioSelect.value = cidadeAtual;
-      } else {
-        municipioSelect.value = '';
-      }
+    function atualizarDropdownCnaes() {
+      ddCnae.setOptions(
+        cnaesCatalog.map((item) => ({
+          value: item.codigo,
+          label: `${item.codigoFormatado} - ${item.descricao}`,
+          shortLabel: item.codigoFormatado,
+          group: item.secao,
+        })),
+      );
     }
 
     async function carregarCatalogoCnaes() {
@@ -783,7 +1104,7 @@
       } catch {
         cnaesCatalog = FALLBACK_CNAES;
       }
-      renderCnaeDropdown();
+      atualizarDropdownCnaes();
     }
 
     async function carregarLocalidades() {
@@ -797,27 +1118,18 @@
         estadosCatalog = FALLBACK_ESTADOS;
         municipiosCatalog = FALLBACK_MUNICIPIOS;
       }
-      renderEstadosDropdown();
-      renderMunicipiosDropdown();
+      atualizarDropdownRegioes();
+      atualizarDropdownEstados();
+      atualizarDropdownMunicipios();
     }
 
     function buildFiltersFromForm() {
       const filtros = {};
-      const uf = ufSelect.value;
-      if (uf) filtros.uf = [uf];
 
-      const regiao = regiaoSelect.value;
-      if (regiao) filtros.regiao = [regiao];
-
-      const cnae = Number(cnaeSelect.value);
-      if (Number.isInteger(cnae) && cnae > 0) {
-        filtros.cnae_fiscal_principal = [cnae];
-      }
-
-      const municipio = Number(municipioSelect.value);
-      if (Number.isInteger(municipio) && municipio > 0) {
-        filtros.codigo_municipio_ibge = [municipio];
-      }
+      if (selectedRegioes.size > 0) filtros.regiao = Array.from(selectedRegioes);
+      if (selectedUfs.size > 0) filtros.uf = Array.from(selectedUfs);
+      if (selectedMunicipios.size > 0) filtros.codigo_municipio_ibge = Array.from(selectedMunicipios);
+      if (selectedCnaes.size > 0) filtros.cnae_fiscal_principal = Array.from(selectedCnaes);
 
       const porte = Number(document.getElementById('porte').value);
       if (Number.isInteger(porte) && porte > 0) filtros.porte_empresa = [porte];
@@ -825,11 +1137,11 @@
       const matriz = Number(document.getElementById('matriz').value);
       if (matriz === 1 || matriz === 2) filtros.matriz_filial = matriz;
 
-      const capMin = document.getElementById('capital-min').value;
-      if (capMin !== '') filtros.capital_social_min = Number(capMin);
+      const capMin = desmascararMoedaParaNumero(capitalMinInput.value);
+      if (capMin !== undefined) filtros.capital_social_min = capMin;
 
-      const capMax = document.getElementById('capital-max').value;
-      if (capMax !== '') filtros.capital_social_max = Number(capMax);
+      const capMax = desmascararMoedaParaNumero(capitalMaxInput.value);
+      if (capMax !== undefined) filtros.capital_social_max = capMax;
 
       const simples = document.getElementById('simples').value;
       if (simples) filtros.opcao_simples = simples;
@@ -861,6 +1173,7 @@
 
     async function calcularCotacao(event) {
       event.preventDefault();
+      fecharOutrosDropdowns(null);
       const filtros = buildFiltersFromForm();
       lastFilters = filtros;
       btnCotar.disabled = true;
@@ -886,10 +1199,7 @@
           const label = document.createElement('span');
           label.textContent = `${faixa.faixa} (${faixa.quantidade.toLocaleString('pt-BR')} reg.)`;
           const val = document.createElement('strong');
-          val.textContent = (faixa.subtotalCentavos / 100).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          });
+          val.textContent = formatarMoedaBrl(faixa.subtotalCentavos / 100);
           li.append(label, val);
           resTiers.appendChild(li);
         }
@@ -898,14 +1208,15 @@
         if (Array.isArray(data.amostra) && data.amostra.length > 0) {
           for (const emp of data.amostra) {
             const tr = document.createElement('tr');
-            tr.innerHTML = '';
             const tdCnpj = document.createElement('td');
             tdCnpj.textContent = emp.cnpj_mascarado;
             const tdRazao = document.createElement('td');
             tdRazao.textContent = emp.razao_social;
             const tdLoc = document.createElement('td');
             tdLoc.textContent = `${emp.municipio_nome} - ${emp.uf}`;
-            tr.append(tdCnpj, tdRazao, tdLoc);
+            const tdCap = document.createElement('td');
+            tdCap.textContent = formatarMoedaBrl(Number(emp.capital_social || 0));
+            tr.append(tdCnpj, tdRazao, tdLoc, tdCap);
             resSampleBody.appendChild(tr);
           }
           resSampleWrap.classList.remove('hidden');
@@ -924,7 +1235,7 @@
     }
 
     async function aguardarArquivoPedido(pedidoId) {
-      for (let tentativa = 0; tentativa < 15; tentativa += 1) {
+      for (let tentativa = 0; tentativa < 20; tentativa += 1) {
         const res = await fetch(`/api/pedidos/${encodeURIComponent(pedidoId)}`);
         if (res.ok) {
           const detail = await res.json();
@@ -932,7 +1243,7 @@
             await carregarPedidos();
             if (detail.pedido.status_arquivo === 'READY') {
               ordersFeedback.className = 'state-box success';
-              ordersFeedback.textContent = `Exportação gratuita em localhost concluída para o pedido ${pedidoId.slice(0, 8)} (valor exibido de referência: ${detail.pedido.valor_formatado}). Clique em Baixar CSV na lista abaixo.`;
+              ordersFeedback.textContent = `Exportação gratuita em localhost concluída para o pedido ${pedidoId.slice(0, 8)} (valor exibido de referência: ${detail.pedido.valor_formatado}). Clique em Baixar XLSX na lista abaixo.`;
             } else {
               ordersFeedback.className = 'state-box error';
               ordersFeedback.textContent = `Falha ao gerar o arquivo do pedido ${pedidoId.slice(0, 8)}.`;
@@ -954,7 +1265,7 @@
         const response = await fetch('/api/checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filtros: lastFilters, formatoArquivo: 'csv' }),
+          body: JSON.stringify({ filtros: lastFilters, formatoArquivo: 'xlsx' }),
         });
         const data = await response.json();
         if (!response.ok) {
@@ -963,7 +1274,7 @@
 
         if (data.modoLocalhost) {
           ordersFeedback.className = 'state-box success';
-          ordersFeedback.textContent = `Exportação gratuita liberada em localhost para o pedido ${data.pedidoId.slice(0, 8)}. Gerando arquivo CSV...`;
+          ordersFeedback.textContent = `Exportação gratuita liberada em localhost para o pedido ${data.pedidoId.slice(0, 8)}. Gerando planilha XLSX...`;
           ordersFeedback.classList.remove('hidden');
           await carregarPedidos();
           await aguardarArquivoPedido(data.pedidoId);
@@ -1030,7 +1341,7 @@
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'btn btn-secondary';
-            btn.textContent = 'Baixar CSV';
+            btn.textContent = 'Baixar XLSX';
             btn.addEventListener('click', async () => {
               const res = await fetch(`/api/pedidos/${encodeURIComponent(p.id)}`);
               const detail = await res.json();
@@ -1058,7 +1369,7 @@
       const pedidoId = params.get('pedido');
       if (status === 'sucesso' && pedidoId) {
         ordersFeedback.className = 'state-box success';
-        ordersFeedback.textContent = `Pagamento recebido para o pedido ${pedidoId.slice(0, 8)}. O arquivo será disponibilizado assim que o processamento concluir.`;
+        ordersFeedback.textContent = `Pagamento recebido para o pedido ${pedidoId.slice(0, 8)}. A planilha XLSX será disponibilizada assim que o processamento concluir.`;
         ordersFeedback.classList.remove('hidden');
       } else if (status === 'cancelado') {
         ordersFeedback.className = 'state-box warning';
@@ -1069,19 +1380,25 @@
 
     const isLocalhostUi = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
     if (isLocalhostUi) {
-      btnCheckout.textContent = 'Exportar CSV grátis (modo localhost)';
+      btnCheckout.textContent = 'Exportar XLSX grátis (modo localhost)';
     }
 
-    form.addEventListener('submit', calcularCotacao);
-    regiaoSelect.addEventListener('change', () => {
-      renderEstadosDropdown();
-      renderMunicipiosDropdown();
+    capitalMinInput.addEventListener('input', (e) => {
+      e.target.value = formatarInputMoeda(e.target.value);
     });
-    ufSelect.addEventListener('change', renderMunicipiosDropdown);
+    capitalMaxInput.addEventListener('input', (e) => {
+      e.target.value = formatarInputMoeda(e.target.value);
+    });
+
+    form.addEventListener('submit', calcularCotacao);
     btnLimpar.addEventListener('click', () => {
       form.reset();
-      renderEstadosDropdown();
-      renderMunicipiosDropdown();
+      ddRegiao.reset();
+      atualizarDropdownEstados();
+      ddUf.reset();
+      atualizarDropdownMunicipios();
+      ddMunicipio.reset();
+      ddCnae.reset();
       lastFilters = null;
       showQuoteState('empty');
     });

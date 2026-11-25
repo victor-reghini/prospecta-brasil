@@ -5,6 +5,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import ExcelJS from 'exceljs';
 import Stripe from 'stripe';
 
 import { createApp } from '../src/app.js';
@@ -43,7 +44,20 @@ function createFakeRepo(rows: EmpresaExportRow[]): {
     const adquiridos = usuarioId ? leadsAdquiridos.get(usuarioId) : undefined;
     return rows.filter((row) => {
       if (row.situacao_cadastral !== 2) return false;
+      if (filtros.regiao?.length && !filtros.regiao.includes(row.regiao)) return false;
       if (filtros.uf?.length && !filtros.uf.includes(row.uf)) return false;
+      if (
+        filtros.codigo_municipio_ibge?.length &&
+        !filtros.codigo_municipio_ibge.includes(row.codigo_municipio_ibge)
+      ) {
+        return false;
+      }
+      if (
+        filtros.cnae_fiscal_principal?.length &&
+        !filtros.cnae_fiscal_principal.includes(row.cnae_fiscal_principal)
+      ) {
+        return false;
+      }
       if (filtros.somente_com_email && !row.email) return false;
       if (filtros.excluir_leads_ja_comprados && adquiridos?.has(row.cnpj_completo)) return false;
       return true;
@@ -347,7 +361,7 @@ test('fluxo completo: cotação, checkout Stripe, webhook idempotente e worker s
         'Content-Type': 'application/json',
         'x-force-stripe': 'true',
       },
-      body: JSON.stringify({ filtros: { uf: ['SP'] }, formatoArquivo: 'csv' }),
+      body: JSON.stringify({ filtros: { uf: ['SP'] }, formatoArquivo: 'xlsx' }),
     });
     assert.equal(checkoutRes.status, 201);
     const checkoutJson = (await checkoutRes.json()) as { pedidoId: string; checkoutUrl: string };
@@ -374,7 +388,7 @@ test('fluxo completo: cotação, checkout Stripe, webhook idempotente e worker s
           payment_intent: 'pi_test_001',
           metadata: {
             pedido_id: checkoutJson.pedidoId,
-            formato_arquivo: 'csv',
+            formato_arquivo: 'xlsx',
           },
         },
       },
@@ -421,10 +435,17 @@ test('fluxo completo: cotação, checkout Stripe, webhook idempotente e worker s
 
     const downloadRes = await fetch(`${server.baseUrl}${pedidoJson.downloadUrl}`);
     assert.equal(downloadRes.status, 200);
-    const csvText = await downloadRes.text();
-    assert.match(csvText, /11222333000181/);
-    assert.match(csvText, /EMPRESA ALPHA LTDA/);
-    assert.doesNotMatch(csvText, /22333444000152/);
+    const xlsxBuffer = Buffer.from(await downloadRes.arrayBuffer());
+    assert.equal(xlsxBuffer.subarray(0, 2).toString('utf8'), 'PK');
+
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(xlsxBuffer as unknown as ArrayBuffer);
+    const sheet = wb.getWorksheet('Empresas B2B');
+    assert.ok(sheet);
+    assert.equal(sheet.rowCount, 2);
+    assert.equal(sheet.getRow(2).getCell(1).value, '11222333000181');
+    assert.equal(sheet.getRow(2).getCell(2).value, 'EMPRESA ALPHA LTDA');
+    assert.match(String(sheet.getRow(2).getCell(9).value), /R\$\s*150\.000,00/);
 
     // 7. Verifica deduplicação registrada e refletida em nova cotação com excluir_leads_ja_comprados
     const userSet = leadsAdquiridos.get('00000000-0000-4000-8000-000000000001');
@@ -525,20 +546,29 @@ test('GET /api/cnaes e exportação gratuita em localhost preservando cálculo d
     assert.equal(locAllJson.estados.length, 27);
     assert.ok(locAllJson.municipios.length > 50);
 
-    const locSpRes = await fetch(`${server.baseUrl}/api/localidades?uf=SP`);
-    assert.equal(locSpRes.status, 200);
-    const locSpJson = (await locSpRes.json()) as {
+    const locSpPrRes = await fetch(`${server.baseUrl}/api/localidades?uf=SP,PR`);
+    assert.equal(locSpPrRes.status, 200);
+    const locSpPrJson = (await locSpPrRes.json()) as {
       municipios: Array<{ codigo_ibge: number; nome: string; uf: string }>;
     };
-    assert.ok(locSpJson.municipios.length >= 20);
-    assert.ok(locSpJson.municipios.every((m) => m.uf === 'SP'));
-    assert.ok(locSpJson.municipios.some((m) => m.codigo_ibge === 3550308));
+    assert.ok(locSpPrJson.municipios.length >= 30);
+    assert.ok(locSpPrJson.municipios.every((m) => m.uf === 'SP' || m.uf === 'PR'));
+    assert.ok(locSpPrJson.municipios.some((m) => m.codigo_ibge === 3550308));
+    assert.ok(locSpPrJson.municipios.some((m) => m.codigo_ibge === 4106902));
 
-    // 2. Em localhost (127.0.0.1), exporta sem Stripe mesmo com valor exibido calculado
+    // 2. Em localhost (127.0.0.1), exporta XLSX sem Stripe mesmo com valor exibido calculado
     const checkoutRes = await fetch(`${server.baseUrl}/api/checkout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filtros: { uf: ['SP'] }, formatoArquivo: 'csv' }),
+      body: JSON.stringify({
+        filtros: {
+          regiao: ['Sudeste', 'Sul'],
+          uf: ['SP', 'PR'],
+          codigo_municipio_ibge: [3550308, 4106902],
+          cnae_fiscal_principal: [6201501, 4930202],
+        },
+        formatoArquivo: 'xlsx',
+      }),
     });
     assert.equal(checkoutRes.status, 201);
     const checkoutJson = (await checkoutRes.json()) as {
@@ -559,12 +589,15 @@ test('GET /api/cnaes e exportação gratuita em localhost preservando cálculo d
     };
     assert.equal(pedidoJson.pedido.status_pagamento, 'PAID');
     assert.equal(pedidoJson.pedido.status_arquivo, 'READY');
-    assert.ok(pedidoJson.downloadUrl);
+    assert.ok(pedidoJson.downloadUrl?.endsWith('.xlsx'));
 
-    const csvRes = await fetch(`${server.baseUrl}${pedidoJson.downloadUrl}`);
-    assert.equal(csvRes.status, 200);
-    const csvText = await csvRes.text();
-    assert.match(csvText, /11222333000181/);
+    const xlsxRes = await fetch(`${server.baseUrl}${pedidoJson.downloadUrl}`);
+    assert.equal(xlsxRes.status, 200);
+    const xlsxBuf = Buffer.from(await xlsxRes.arrayBuffer());
+    assert.equal(xlsxBuf.subarray(0, 2).toString('utf8'), 'PK');
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(xlsxBuf as unknown as ArrayBuffer);
+    assert.equal(wb.getWorksheet('Empresas B2B')?.getRow(2).getCell(1).value, '11222333000181');
 
     const etlStatusRes = await fetch(`${server.baseUrl}/api/etl/status`);
     assert.equal(etlStatusRes.status, 200);

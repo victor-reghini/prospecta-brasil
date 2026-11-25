@@ -101,16 +101,33 @@ export function createApp(deps: AppDependencies) {
   });
 
   app.get('/api/localidades', (req: Request, res: Response) => {
-    const ufParam = typeof req.query.uf === 'string' ? req.query.uf.trim().toUpperCase() : '';
-    const regiaoParam = typeof req.query.regiao === 'string' ? req.query.regiao.trim() : '';
+    const ufsParam =
+      typeof req.query.uf === 'string'
+        ? req.query.uf
+            .split(',')
+            .map((s) => s.trim().toUpperCase())
+            .filter(Boolean)
+        : [];
+    const regioesParam =
+      typeof req.query.regiao === 'string'
+        ? req.query.regiao
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [];
 
-    const estados = regiaoParam
-      ? ESTADOS_BRASIL.filter((e) => e.regiao === regiaoParam)
-      : ESTADOS_BRASIL;
+    const regioesSet = new Set(regioesParam);
+    const estados =
+      regioesSet.size > 0
+        ? ESTADOS_BRASIL.filter((e) => regioesSet.has(e.regiao))
+        : ESTADOS_BRASIL;
 
     const ufsPermitidas = new Set(estados.map((e) => e.sigla));
+    const ufsFiltroSet = new Set(ufsParam);
     const municipios = MUNICIPIOS_BRASIL.filter((m) => {
-      if (ufParam) return m.uf === ufParam;
+      if (ufsFiltroSet.size > 0) {
+        return ufsFiltroSet.has(m.uf) && (regioesSet.size === 0 || ufsPermitidas.has(m.uf));
+      }
       return ufsPermitidas.has(m.uf);
     });
 
